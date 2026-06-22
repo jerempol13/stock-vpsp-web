@@ -4,127 +4,34 @@
   <meta charset="UTF-8">
   <title>Sortie stock VPSP</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 25px;
-      background: #f4f4f4;
-    }
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 12px;
-      max-width: 420px;
-      margin: auto;
-      box-shadow: 0 2px 8px #ccc;
-    }
-    h1 {
-      text-align: center;
-    }
-    input, button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 12px;
-      font-size: 18px;
-      box-sizing: border-box;
-    }
-    button {
-      background: #0d6efd;
-      color: white;
-      border: none;
-      border-radius: 8px;
-    }
-    .success {
-      color: green;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 15px;
-    }
-    .error {
-      color: red;
-      font-weight: bold;
-      text-align: center;
-      margin-top: 15px;
-    }
-  </style>
 </head>
 
 <body>
-  <div class="card">
-    <h1>Sortie stock</h1>
+  <h1>Sortie stock</h1>
 
-    <p>Produit ID :</p>
-    <input id="produit_id" readonly>
+  <p>Produit ID :</p>
+  <input id="produit_id" readonly>
 
-    <p>Quantité à déduire :</p>
-    <input id="quantite" type="number" min="1" placeholder="Ex : 2">
+  <p>Quantité à déduire :</p>
+  <input id="quantite" type="number" min="1" placeholder="Ex : 2">
 
-    <p>Nom du secouriste :</p>
-    <input id="secouriste" type="text" placeholder="Nom / prénom">
+  <p>Nom du secouriste :</p>
+  <input id="secouriste" type="text" placeholder="Nom / prénom">
 
-    <button onclick="envoyer()">Valider la sortie</button>
+  <br><br>
+  <button onclick="envoyer()">Valider la sortie</button>
 
-    <div id="message"></div>
-  </div>
+  <p id="message"></p>
 
   <script>
-    const SUPABASE_URL = "https://etxjszpsuvldhbdtnogt.supabase.co";
-    const SUPABASE_KEY = "$$eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0eGpzenBzdXZsZGhiZHRub2d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNDIwMDIsImV4cCI6MjA5NzcxODAwMn0.We_By4NgV8pRmvm2V4AcfS4rdBw7doI5ACs32ogUPUI"
-
     const params = new URLSearchParams(window.location.search);
     const produitId = params.get("produit");
 
     document.getElementById("produit_id").value = produitId || "";
 
-    async function envoyer() {
-      const quantite = document.getElementById("quantite").value;
-      const secouriste = document.getElementById("secouriste").value;
-      const message = document.getElementById("message");
-
-      if (!produitId) {
-        message.innerHTML = "<div class='error'>Produit introuvable dans le QR.</div>";
-        return;
-      }
-
-      if (!quantite || quantite <= 0) {
-        message.innerHTML = "<div class='error'>Quantité invalide.</div>";
-        return;
-      }
-
-      const response = await fetch(${SUPABASE_URL}/rest/v1/sorties_qr, {
-        method: "POST",
-        headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": Bearer ${SUPABASE_KEY},
-          "Content-Type": "application/json",
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({
-          produit_id: parseInt(produitId),
-          quantite: parseInt(quantite),
-          secouriste: secouriste,
-          importe: false
-        })
-      });
-
-      if (response.ok) {
-        message.innerHTML = "<div class='success'>Sortie enregistrée ✅</div>";
-        document.getElementById("quantite").value = "";
-      } else {
-        message.innerHTML = "<div class='error'>Erreur lors de l'enregistrement.</div>";
-      }
+    function envoyer() {
+      alert("Produit : " + produitId);
     }
   </script>
-
-    <script>
-const params = new URLSearchParams(window.location.search);
-const produit = params.get("produit");
-
-if (produit) {
-   document.getElementById("produit_id").value = produit;
-}
-</script>
-  
 </body>
 </html>
