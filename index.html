@@ -29,9 +29,35 @@
 
     document.getElementById("produit_id").value = produitId || "";
 
-    function envoyer() {
-      alert("Produit : " + produitId);
-    }
-  </script>
-</body>
-</html>
+    async function envoyer() {
+  const quantite = document.getElementById("quantite").value;
+  const secouriste = document.getElementById("secouriste").value;
+
+  if (!produitId || !quantite || quantite <= 0) {
+    alert("Produit ou quantité invalide");
+    return;
+  }
+
+  const response = await fetch("https://etxjszpsuvldhbdtnogt.supabase.co/rest/v1/sorties_qr", {
+    method: "POST",
+    headers: {
+      "apikey": "$$eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0eGpzenBzdXZsZGhiZHRub2d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNDIwMDIsImV4cCI6MjA5NzcxODAwMn0.We_By4NgV8pRmvm2V4AcfS4rdBw7doI5ACs32ogUPUI",
+      "Authorization": "$$eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0eGpzenBzdXZsZGhiZHRub2d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNDIwMDIsImV4cCI6MjA5NzcxODAwMn0.We_By4NgV8pRmvm2V4AcfS4rdBw7doI5ACs32ogUPUI",
+      "Content-Type": "application/json",
+      "Prefer": "return=minimal"
+    },
+    body: JSON.stringify({
+      produit_id: parseInt(produitId),
+      quantite: parseInt(quantite),
+      secouriste: secouriste,
+      importe: false
+    })
+  });
+
+  if (response.ok) {
+    alert("Sortie enregistrée ✅");
+    document.getElementById("quantite").value = "";
+  } else {
+    alert("Erreur enregistrement Supabase");
+  }
+}
