@@ -50,15 +50,6 @@
   </style>
 </head>
 
-  <script>
-const params = new URLSearchParams(window.location.search);
-const produit = params.get("produit");
-
-if (produit) {
-   document.getElementById("produit_id").value = produit;
-}
-</script>
-  
 <body>
   <div class="card">
     <h1>Sortie stock</h1>
@@ -125,5 +116,15 @@ if (produit) {
       }
     }
   </script>
+
+    <script>
+const params = new URLSearchParams(window.location.search);
+const produit = params.get("produit");
+
+if (produit) {
+   document.getElementById("produit_id").value = produit;
+}
+</script>
+  
 </body>
 </html>
