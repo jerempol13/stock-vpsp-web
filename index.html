@@ -31,25 +31,26 @@
     const produitId = params.get("produit");
 
     async function chargerProduit() {
-      const response = await fetch(
-        ${SUPABASE_URL}/rest/v1/produits?id=eq.${produitId}&select=nom,
-        {
-          headers: {
-            "apikey": SUPABASE_KEY,
-            "Authorization": Bearer ${SUPABASE_KEY}
-          }
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.length > 0) {
-        document.getElementById("produit_nom").value = data[0].nom;
-      } else {
-        document.getElementById("produit_nom").value = "Produit introuvable";
+  const response = await fetch(
+    '${SUPABASE_URL}/rest/v1/produits?id=eq.${produitId}&select=nom',
+    {
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": 'Bearer ${SUPABASE_KEY}'
       }
     }
+  );
 
+  const data = await response.json();
+
+  if (data.length > 0) {
+    document.getElementById("produit_nom").value = data[0].nom;
+  } else {
+    document.getElementById("produit_nom").value = "Produit introuvable";
+  }
+}
+
+    chargerProduit();
     async function envoyer() {
       const quantite = document.getElementById("quantite").value;
       const secouriste = document.getElementById("secouriste").value;
@@ -63,7 +64,7 @@
         method: "POST",
         headers: {
           "apikey": SUPABASE_KEY,
-          "Authorization": Bearer ${SUPABASE_KEY},
+          "Authorization": 'Bearer ${SUPABASE_KEY},
           "Content-Type": "application/json",
           "Prefer": "return=minimal"
         },
