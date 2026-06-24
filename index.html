@@ -28,6 +28,28 @@
     const produitId = params.get("produit");
 
     document.getElementById("produit_id").value = produitId || "";
+    let nomProduit = "";
+    async function chargerNomProduit() {
+    if (!produitId) return;
+
+    const response = await fetch(
+        https://etxjszpsuvldhbdtnogt.supabase.co/rest/v1/produits?id=eq.${produitId}&select=nom,
+        {
+            headers: {
+                "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0eGpzenBzdXZsZGhiZHRub2d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNDIwMDIsImV4cCI6MjA5NzcxODAwMn0.We_By4NgV8pRmvm2V4AcfS4rdBw7doI5ACs32ogUPUI","
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV0eGpzenBzdXZsZGhiZHRub2d0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNDIwMDIsImV4cCI6MjA5NzcxODAwMn0.We_By4NgV8pRmvm2V4AcfS4rdBw7doI5ACs32ogUPUI",
+        }
+    );
+
+    const data = await response.json();
+
+    if (data.length > 0) {
+        nomProduit = data[0].nom;
+        document.getElementById("produit_id").value = nomProduit;
+    }
+}
+
+chargerNomProduit();
 
     async function envoyer() {
   const quantite = document.getElementById("quantite").value;
