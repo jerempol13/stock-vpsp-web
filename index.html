@@ -18,6 +18,19 @@
   <p>Nom du secouriste :</p>
   <input id="secouriste" type="text" placeholder="Nom / prénom">
 
+  <p>Lot :</p>
+
+<select id="lot">
+  <option value="Armoire">Armoire</option>
+  <option value="A">A</option>
+  <option value="A Malle">A Malle</option>
+  <option value="B">B</option>
+  <option value="C">C</option>
+  <option value="VPSP">VPSP</option>
+</select>
+
+<br><br>
+
   <br><br>
   <button onclick="envoyer()">Valider la sortie</button>
 
@@ -53,6 +66,7 @@
     async function envoyer() {
       const quantite = document.getElementById("quantite").value;
       const secouriste = document.getElementById("secouriste").value;
+      const lot = document.getElementById("lot").value;
 
       if (!produitId || !quantite || quantite <= 0) {
         alert("Produit ou quantité invalide");
@@ -73,6 +87,7 @@
             produit_id: parseInt(produitId),
             quantite: parseInt(quantite),
             secouriste: secouriste,
+            lot: lot,
             importe: false
           })
         }
