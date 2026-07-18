@@ -1,66 +1,37 @@
-# Gestion de stock par QR code
+# Stock VPSP — version Vercel
 
-Application Flask simple pour gérer les entrées et sorties de stock.
+Cette version n'utilise pas SQLite pour les données en ligne. Vercel exécute l'application dans une fonction dont le disque local n'est pas persistant. Les produits et mouvements sont donc stockés dans Supabase.
 
-## Fonctions
+## Contenu
 
-- Ajout de produits
-- Stock actuel
-- Entrée de stock
-- Sortie de stock avec blocage si le stock est insuffisant
-- Historique des mouvements
-- Deux QR codes automatiques par produit :
-  - Entrée
-  - Sortie
-- Numéro de lot et date de péremption pour les entrées
+- `app.py` : application Flask complète, avec pages HTML intégrées
+- `requirements.txt` : dépendances Python
+- `schema_supabase.sql` : tables et règles Supabase
+- `produits.csv` : 290 produits uniques extraits de l'ancienne base
+- `.python-version` : version Python utilisée par Vercel
 
-## Installation locale
+## Mise en place
 
-```bash
-python -m venv .venv
-```
+### 1. Supabase
 
-Sous Windows :
+1. Créer ou ouvrir un projet Supabase.
+2. Ouvrir **SQL Editor**.
+3. Copier-coller tout le contenu de `schema_supabase.sql`, puis exécuter.
+4. Ouvrir **Table Editor > produits > Insert > Import data from CSV**.
+5. Importer `produits.csv`.
 
-```bash
-.venv\Scripts\activate
-```
+### 2. GitHub
 
-Sous Linux/macOS :
+Envoyer ces fichiers à la racine du dépôt. Aucun dossier `templates` ou `static` n'est nécessaire.
 
-```bash
-source .venv/bin/activate
-```
+### 3. Vercel
 
-Puis :
+1. Importer le dépôt GitHub dans Vercel.
+2. Ne pas renseigner de Build Command ni d'Output Directory.
+3. Ajouter ces variables d'environnement :
+   - `SUPABASE_URL` : URL du projet Supabase
+   - `SUPABASE_KEY` : clé `anon` du projet Supabase
+   - `SECRET_KEY` : une longue valeur aléatoire
+4. Cliquer sur **Deploy**.
 
-```bash
-pip install -r requirements.txt
-python app.py
-```
-
-Ouvrir ensuite :
-
-```text
-http://127.0.0.1:5000
-```
-
-## Déploiement sur Render
-
-1. Mettre ce projet sur GitHub.
-2. Dans Render, créer un nouveau Blueprint.
-3. Sélectionner le dépôt.
-4. Render utilisera automatiquement `render.yaml`.
-5. Une fois le site en ligne, créer les produits.
-6. Ouvrir la page « QR codes » de chaque produit puis imprimer les deux codes.
-
-## Liens produits
-
-L'application utilise des liens simples et fiables :
-
-```text
-/entree/1
-/sortie/1
-```
-
-Le chiffre correspond à l'identifiant du produit. Le produit est donc toujours prérempli après le scan.
+Les anciens QR codes `/?produit=7` restent compatibles et ouvrent une sortie de stock.

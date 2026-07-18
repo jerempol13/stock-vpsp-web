@@ -1,0 +1,291 @@
+﻿id,nom,actif
+7,Appareil ECG,True
+234,Appareil à glycémie,True
+377,Aspirateur de mucosité,True
+8,Aspirateur De Mucosité Manuel,True
+237,Aspirateur manuel,True
+9,Aspirateur Mucosité Electrique,True
+285,Attelle Cervico Thoracique,True
+292,Attelles alluformes,True
+291,Attelles à dépression,True
+10,Autopiqueur Glycemique,True
+308,Autopiqueurs glycémie,True
+145,Autopiqueurs pour glycémie,True
+11,Bande Nylex 7 Cm,True
+12,Bandelette Glycemique,True
+307,Bandelettes glycémie,True
+144,Bandelettes pour glycémie,True
+13,Bandes Nylex 10 Cm,True
+161,Bandes Nylex 7 cm,True
+14,Bassin,True
+220,BAVU adulte,True
+221,BAVU enfant,True
+251,BAVU nourrisson,True
+247,BAVU pédiatrique,True
+270,Bidon Surfanios,True
+194,Boite DASRI pour piquant glycémie,True
+188,Boite de masques chirurgicaux,True
+200,Boite de pansements prédécoupés,True
+15,Boite Gants Non Stériles Taille L,True
+16,Boite Gants Non Stériles Taille M,True
+17,Boite Gants Non Stériles Taille S,True
+18,Boite Gants Non Stériles Taille Xl,True
+19,Boite Masques Chirurgicaux,True
+20,Boite Pansements Predecoupes,True
+252,Boite pansements prédécoupés,True
+21,Boites Embouts Tympanique,True
+22,Bonnet Naissance,True
+142,Bouteille d'eau,True
+246,Bouteille d'oxygène 5 L,True
+305,Bouteille d’eau,True
+370,Bouteille d’oxygène 5L,True
+23,Bouteille Eau,True
+24,Bouteille O2,True
+176,Bouteilles d'eau,True
+282,Boîte de masques chirurgicaux,True
+195,Boîtes de gants S/M/L/XL,True
+25,Bracelets Snv,True
+26,Brancard,True
+288,Brancard cuillère,True
+298,Cagoules de fuite,True
+27,Cagoules De Fuites,True
+177,Cahier hygiène matériel,True
+358,Cale tête avec mousses,True
+204,Cale tête avec ses mousses,True
+296,Cales tête,True
+219,Canule oropharyngée de toute taille,True
+241,Canules de Guedel toutes tailles,True
+363,Canules oropharyngées toutes tailles,True
+28,Canules Tailles 0,True
+29,Canules Tailles 00,True
+30,Canules Tailles 000,True
+31,Canules Tailles 1,True
+32,Canules Tailles 2,True
+33,Canules Tailles 3,True
+34,Canules Tailles 4,True
+35,Canules Tailles 5,True
+286,Cardio pompe (optionnel),True
+290,Casques de protection,True
+36,Casques Type F2,True
+37,Ceinture Pelvienne,True
+274,Chaise de transport,True
+38,Chaise De Transports,True
+39,Champs Steriles 45x45cm,True
+159,Champs stériles,True
+40,Charlottes,True
+41,Chlorexidine,True
+198,Chlorhexidine,True
+155,Chlorhexidine 5 ml,True
+235,Chlorhexidine monodose,True
+222,Chlorhexidine monodoses,True
+42,Ciseau,True
+43,Ciseau Gesco,True
+151,Ciseaux Gesco,True
+44,Ciseaux Stériles,True
+253,Ciseaux type Gesco,True
+45,Clamps Ombilicaux De Barr Stériles,True
+215,Collier cervical adulte,True
+216,Collier cervical enfant,True
+46,Collier Cervicaux Adulte,True
+47,Collier Cervicaux Enfant,True
+48,Compresse Hydrogel 10X10,True
+49,Compresse Hydrogel 20x40,True
+50,Compresse Hydrogel Facial,True
+199,Compresses stériles,True
+132,Compresses Stériles  x2,True
+158,"Compresses stériles 7,5 x 7,5 cm",True
+133,Compresses Stériles x1,True
+134,Compresses stériles x5,True
+52,Container Dasri,True
+231,Container DASRI glycémie,True
+229,Container DASRI piquants tranchants,True
+53,Couverture Bacteriologique,True
+283,Couverture bactériologique,True
+54,Couverture De Survie,True
+168,Couvertures de survie,True
+208,Couvertures de survie non stériles,True
+55,Cuillere,True
+294,Cônes de Lübeck,True
+56,Detecteur CO2,True
+57,Dfiche Déclaration AEV,True
+175,Documents administratifs,True
+58,Draps,True
+59,DSA,True
+250,Détecteur de CO,True
+60,Echarpes Triangulaire,True
+61,Electrodes Adultes,True
+62,Electrodes ECG,True
+63,Electrodes Enfants,True
+281,EPI,True
+225,Fiche d'inventaire,True
+214,Fiche d'inventaire du matériel,True
+64,Fiche Rapport Utilisation DSA,True
+65,Fiche Reflexe AEV,True
+212,Fiches d'intervention,True
+66,Flacon De Dakin 60 Ml,True
+302,Gants de manutention,True
+140,Gants de manutention (paires),True
+67,Gants Manutention (paires),True
+68,Gants Non Steriles,True
+207,Gants non stériles S/M/L/XL,True
+69,Gants Sterile Taille L,True
+70,Gants Sterile Taille M,True
+71,Gants Sterile Taille S,True
+72,Gants Sterile Taille Xl,True
+258,Gants à usage unique (boites toutes tailles),True
+73,Garrot Tourniquet,True
+255,Garrot à tourniquet,True
+74,Gaze Chito Sam,True
+203,Gel désinfectant mains,True
+314,Gesco,True
+75,Glucometre,True
+143,Glucomètre,True
+76,Gobelets,True
+77,Haricots,True
+181,Insufflateur adulte,True
+182,Insufflateur pédiatrique,True
+78,Insuflateur Adulte,True
+79,Insuflateur Pediatrique,True
+80,KIT Accouchement,True
+353,Kit AES / AEV,True
+190,Kit AES – ARV,True
+81,KIT AEV,True
+82,KIT Brulure,True
+189,Kit Brûlure,True
+83,KIT Mebres Sectionne,True
+280,Kit section de membre,True
+354,Kit section de membres,True
+84,Lampe Torche,True
+211,Lampe torche + piles,True
+187,Lunette O2,True
+263,Lunette à O2,True
+85,Lunettes De Protection,True
+86,Lunettes Oxygene,True
+242,Lunettes à oxygène,True
+236,Mailles doigt / membres,True
+87,Mailles Toutes Tailles,True
+88,Masque Concentration Moyenne Adulte,True
+89,Masque Concentration Moyenne Enfants,True
+261,Masque concentration simple adulte,True
+262,Masque concentration simple enfant,True
+90,Masque Haute Concentration Adultes,True
+91,Masque Haute Concentration Enfants,True
+245,Masque inhalation simple adulte,True
+249,Masque inhalation simple enfant,True
+92,Masques Chirurgicaux,True
+185,Masques concentration simple adulte,True
+186,Masques concentration simple enfants,True
+93,Masques FFP2,True
+293,Matelas à dépression,True
+244,MHC adulte,True
+183,MHC adultes,True
+260,MHC enfant,True
+184,MHC enfants,True
+248,MHC pédiatriques,True
+94,Mid,True
+95,Oxymetre De Pouls,True
+171,Oxymètre de pouls,True
+96,PACK D'atelles,True
+164,Paire de ciseaux,True
+209,Paires de gants de manutention,True
+226,Paires de gants non stériles S/M/L,True
+172,Paires de gants non stériles S/M/L/XL,True
+259,Paires de gants stériles (sachets toutes tailles),True
+173,Paires de lunettes de protection,True
+97,Pansement Absorbant,True
+153,Pansement imbibé,True
+98,Pansements Compressifs D'urgence,True
+315,Pansements compressifs d’urgence,True
+160,Pansements prédécoupés,True
+99,Pince À Échardes,True
+165,Pince à échardes,True
+100,Plan Dur,True
+224,Poche de froid,True
+386,Poche de froid congelée,True
+101,Poche De Froids,True
+167,Poches de froid,True
+378,Pochette administration,True
+102,Pompe A Vide,True
+295,Pompe à vide,True
+103,Portoir Souple,True
+256,Poubelle DAOM,True
+257,Poubelle DASRI,True
+379,Radios,True
+104,Rasoir Jetable,True
+268,Rouleau d'essuie-tout,True
+138,Rouleau de rubalise,True
+163,Rouleau de sparadrap,True
+105,Rouleau Essuie Tout,True
+196,Rouleau essuie-tout,True
+106,Rouleau Rubalise,True
+107,Rouleau Sparadrap Annalergique,True
+137,S.H.A,True
+108,Sac Dasri Jaune,True
+109,Sac Isotherme,True
+210,Sac matériel à décontaminer rouge,True
+110,Sac Poubelle Noir,True
+148,Sac rouge,True
+111,Sac Rouges,True
+112,Sac Vomitoire,True
+217,Sac à vomissements,True
+265,Sacs DAOM,True
+228,Sacs DASRI,True
+266,Sacs de décontamination rouge,True
+192,Sacs poubelle noirs,True
+191,Sacs rouges à décontaminer,True
+197,Sacs vomitoires,True
+146,Sacs à vomissements,True
+205,Sangle araignée,True
+113,Sangles Arraigne,True
+297,Sangles brancards,True
+206,Sangles de maintien,True
+114,Serum Physiologique 500 Ml,True
+115,Serviette Jetable Large,True
+116,SHA,True
+117,Snogg,True
+385,SNOOG,True
+178,Sondes aspiration adultes,True
+179,Sondes aspiration enfants,True
+180,Sondes aspiration nourrissons,True
+264,Sondes aspirations adultes/enfants/nourrissons,True
+118,Sondes Aspirations CH 06,True
+119,Sondes Aspirations CH 10,True
+120,Sondes Aspirations CH 18,True
+238,Sondes d'aspiration adulte,True
+239,Sondes d'aspiration enfant,True
+240,Sondes d'aspiration nourrisson,True
+388,Sopalin,True
+121,Spray Desinfectant Surface,True
+202,Spray désinfectant de surface,True
+269,Spray désinfectant surfaces,True
+213,Stylo,True
+272,Stéthoscope,True
+273,Sucres,True
+122,Sucres Emballes,True
+141,Sucres emballés,True
+230,Sucres emballés + eau + gobelets,True
+218,Sucres emballés + gobelets + bouteille d'eau,True
+123,Surblouses,True
+124,Système Irrigation Occulaire,True
+201,Sérum physiologique 250 ml,True
+156,Sérum physiologique 5 ml,True
+125,Sérum Physiologique 50 Ml,True
+126,Sérum Physiologique 5ml,True
+223,Sérum physiologique monodoses,True
+127,Tensiometre,True
+169,Tensiomètre,True
+233,Tensiomètre automatique,True
+271,Tensiomètre manuel + brassards,True
+1109,TEST,True
+135,TEST QR,True
+136,TEST1,True
+128,Thermometre,True
+232,Thermomètre tympanique,True
+170,Thermomètre tympanique + embouts,True
+243,Tubulure à oxygène,True
+129,Urinal,True
+276,Urinal femme,True
+275,Urinal homme,True
+193,Ventoline,True
+375,VPSP,True
+166,Écharpes triangulaires,True
