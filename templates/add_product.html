@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Ajouter un produit{% endblock %}
+{% block content %}
+<div class="panel">
+    <h1>Ajouter un produit</h1>
+    <form method="post">
+        <label for="name">Nom du produit</label>
+        <input id="name" name="name" required>
+
+        <label for="reference">Référence</label>
+        <input id="reference" name="reference">
+
+        <label for="initial_stock">Stock initial</label>
+        <input id="initial_stock" name="initial_stock" type="number" min="0" value="0" required>
+
+        <div class="actions">
+            <button type="submit">Créer le produit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

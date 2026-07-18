@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Stock{% endblock %}
+{% block content %}
+<div class="panel">
+    <h1>Stock actuel</h1>
+    <p class="muted">Scannez le QR code Entrée ou Sortie correspondant au produit.</p>
+</div>
+
+{% if products %}
+<div class="grid">
+    {% for product in products %}
+    <section class="panel">
+        <h2>{{ product.name }}</h2>
+        {% if product.reference %}
+            <p class="muted">Référence : {{ product.reference }}</p>
+        {% endif %}
+        <div class="stock">{{ product.stock }} unité(s)</div>
+        <div class="actions">
+            <a class="button success" href="{{ url_for('entree', product_id=product.id) }}">Entrée</a>
+            <a class="button danger" href="{{ url_for('sortie', product_id=product.id) }}">Sortie</a>
+            <a class="button secondary" href="{{ url_for('product_qrcodes', product_id=product.id) }}">QR codes</a>
+        </div>
+    </section>
+    {% endfor %}
+</div>
+{% else %}
+<div class="panel">
+    <p>Aucun produit n'est encore enregistré.</p>
+    <a class="button" href="{{ url_for('add_product') }}">Ajouter le premier produit</a>
+</div>
+{% endif %}
+{% endblock %}

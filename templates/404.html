@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Page introuvable{% endblock %}
+{% block content %}
+<div class="panel">
+    <h1>Page introuvable</h1>
+    <p>Le produit ou le lien demandé n'existe pas.</p>
+    <a class="button" href="{{ url_for('index') }}">Retour au stock</a>
+</div>
+{% endblock %}

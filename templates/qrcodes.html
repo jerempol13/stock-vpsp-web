@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}QR codes — {{ product.name }}{% endblock %}
+{% block content %}
+<div class="panel">
+    <h1>{{ product.name }}</h1>
+    <p>Imprimez et placez les deux QR codes près du produit.</p>
+</div>
+
+<div class="grid">
+    <section class="panel">
+        <h2>Entrée de stock</h2>
+        <img class="qr" src="{{ url_for('qr_code', action='entree', product_id=product.id) }}" alt="QR code entrée">
+        <p class="muted">{{ url_for('entree', product_id=product.id, _external=True) }}</p>
+    </section>
+
+    <section class="panel">
+        <h2>Sortie de stock</h2>
+        <img class="qr" src="{{ url_for('qr_code', action='sortie', product_id=product.id) }}" alt="QR code sortie">
+        <p class="muted">{{ url_for('sortie', product_id=product.id, _external=True) }}</p>
+    </section>
+</div>
+{% endblock %}

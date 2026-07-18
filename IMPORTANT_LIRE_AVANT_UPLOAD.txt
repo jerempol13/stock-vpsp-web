@@ -1,0 +1,29 @@
+À FAIRE SUR GITHUB
+
+1. Décompressez Projet_Stock_VPSP_Render.zip.
+2. Ouvrez le dossier Projet_Stock_VPSP_Render.
+3. Dans GitHub, cliquez sur Add file > Upload files.
+4. Glissez TOUT le contenu du dossier, y compris les dossiers templates et static.
+5. Ne glissez pas seulement les fichiers HTML.
+6. Vérifiez que GitHub affiche bien :
+   - app.py
+   - requirements.txt
+   - render.yaml
+   - templates/
+   - static/
+
+Structure correcte :
+
+Projet_Stock_VPSP_Render/
+├── app.py
+├── requirements.txt
+├── render.yaml
+├── templates/
+│   ├── base.html
+│   ├── index.html
+│   ├── movement.html
+│   ├── history.html
+│   ├── qrcodes.html
+│   └── 404.html
+└── static/
+    └── README.txt

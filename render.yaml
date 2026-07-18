@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: stock-vpsp-web
+    name: gestion-stock-qr
     runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
@@ -8,8 +8,8 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_PATH
-        value: /var/data/stock_vpsp.db
+        value: /var/data/stock.db
     disk:
-      name: stock-vpsp-data
+      name: stock-data
       mountPath: /var/data
       sizeGB: 1

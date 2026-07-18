@@ -1,36 +1,66 @@
-# Site mobile Stock VPSP
+# Gestion de stock par QR code
 
-Ce dossier recrée la partie web supprimée.
+Application Flask simple pour gérer les entrées et sorties de stock.
 
 ## Fonctions
 
-- anciens QR codes compatibles : `/?produit=7` ouvre une sortie ;
-- nouveaux liens séparés : `/entree/7` et `/sortie/7` ;
-- produit automatiquement prérempli ;
-- choix du lot/emplacement ;
-- contrôle du stock avant une sortie ;
-- nom du secouriste obligatoire ;
-- date de péremption pour les entrées ;
-- historique ;
-- génération d'un PDF contenant deux QR codes par produit.
+- Ajout de produits
+- Stock actuel
+- Entrée de stock
+- Sortie de stock avec blocage si le stock est insuffisant
+- Historique des mouvements
+- Deux QR codes automatiques par produit :
+  - Entrée
+  - Sortie
+- Numéro de lot et date de péremption pour les entrées
 
-## Test sur l'ordinateur
+## Installation locale
+
+```bash
+python -m venv .venv
+```
+
+Sous Windows :
+
+```bash
+.venv\Scripts\activate
+```
+
+Sous Linux/macOS :
+
+```bash
+source .venv/bin/activate
+```
+
+Puis :
 
 ```bash
 pip install -r requirements.txt
-flask --app app run
+python app.py
 ```
 
-Puis ouvrir `http://127.0.0.1:5000`.
+Ouvrir ensuite :
 
-## Mise en ligne sur Render
+```text
+http://127.0.0.1:5000
+```
 
-1. Décompresser ce dossier.
-2. Le déposer dans un nouveau dépôt GitHub.
-3. Dans Render, choisir **New > Blueprint**.
-4. Sélectionner le dépôt : Render détectera `render.yaml`.
-5. Une fois déployé, ouvrir `/qrcodes.pdf` pour obtenir les nouveaux QR codes.
+## Déploiement sur Render
 
-## Important sur la synchronisation
+1. Mettre ce projet sur GitHub.
+2. Dans Render, créer un nouveau Blueprint.
+3. Sélectionner le dépôt.
+4. Render utilisera automatiquement `render.yaml`.
+5. Une fois le site en ligne, créer les produits.
+6. Ouvrir la page « QR codes » de chaque produit puis imprimer les deux codes.
 
-Le site Render utilise sa propre copie persistante de la base SQLite. L'application Windows et le site ne se synchronisent pas automatiquement entre eux. Pour une synchronisation en temps réel, il faudra ensuite relier les deux applications à Supabase ou à une autre base en ligne.
+## Liens produits
+
+L'application utilise des liens simples et fiables :
+
+```text
+/entree/1
+/sortie/1
+```
+
+Le chiffre correspond à l'identifiant du produit. Le produit est donc toujours prérempli après le scan.

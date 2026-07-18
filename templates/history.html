@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Historique{% endblock %}
+{% block content %}
+<div class="panel">
+    <h1>Historique des mouvements</h1>
+    {% if movements %}
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Produit</th>
+                <th>Type</th>
+                <th>Quantité</th>
+                <th>Secouriste</th>
+                <th>Lot / Péremption</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in movements %}
+            <tr>
+                <td>{{ m.created_at.replace("T", " ") }}</td>
+                <td>{{ m.product_name }}</td>
+                <td>{{ "Entrée" if m.movement_type == "entree" else "Sortie" }}</td>
+                <td>{{ m.quantity }}</td>
+                <td>{{ m.operator_name or "—" }}</td>
+                <td>
+                    {{ m.lot_number or "—" }}
+                    {% if m.expiry_date %}<br>{{ m.expiry_date }}{% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>Aucun mouvement enregistré.</p>
+    {% endif %}
+</div>
+{% endblock %}

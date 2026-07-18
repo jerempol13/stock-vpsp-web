@@ -1,275 +1,263 @@
-import io
 import os
-import shutil
+import io
 import sqlite3
 from datetime import datetime
-from pathlib import Path
-
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file, abort
 import qrcode
-from flask import Flask, abort, flash, redirect, render_template, request, send_file, url_for
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import mm
-from reportlab.pdfgen import canvas
-
-BASE_DIR = Path(__file__).resolve().parent
-DEFAULT_DB = BASE_DIR / "stock_vpsp_initial.db"
-DB_PATH = Path(os.environ.get("DATABASE_PATH", BASE_DIR / "stock_vpsp.db"))
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "change-this-secret")
-
-LOTS = [
-    "Armoire", "VPSP", "Lot A – Premiers secours", "Lot A Malle",
-    "Lot B – Premiers secours", "Lot C – Premiers secours",
-    "Lot A – Oxygénothérapie", "Lot C – Oxygénothérapie", "Kits"
-]
+app.secret_key = os.environ.get("SECRET_KEY", "change-me-in-production")
+DATABASE = os.environ.get("DATABASE_PATH", "stock.db")
 
 
-def ensure_database():
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    if not DB_PATH.exists():
-        if DEFAULT_DB.exists():
-            shutil.copy2(DEFAULT_DB, DB_PATH)
-        else:
-            raise RuntimeError("Base initiale introuvable")
-
-    with sqlite3.connect(DB_PATH) as conn:
-        columns = {row[1] for row in conn.execute("PRAGMA table_info(mouvements)")}
-        if "secouriste" not in columns:
-            conn.execute("ALTER TABLE mouvements ADD COLUMN secouriste TEXT")
-        if "date_peremption" not in columns:
-            conn.execute("ALTER TABLE mouvements ADD COLUMN date_peremption TEXT")
-        conn.commit()
-
-
-def db():
-    ensure_database()
-    conn = sqlite3.connect(DB_PATH)
+def get_db():
+    conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
 
 
-def get_product(product_id):
-    with db() as conn:
-        return conn.execute(
-            "SELECT id, nom, lot, quantite_min FROM produits WHERE id=? AND COALESCE(actif,1)=1",
-            (product_id,),
-        ).fetchone()
+def init_db():
+    with get_db() as conn:
+        conn.executescript("""
+        CREATE TABLE IF NOT EXISTS products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL UNIQUE,
+            reference TEXT,
+            stock INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS movements (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            product_id INTEGER NOT NULL,
+            movement_type TEXT NOT NULL CHECK(movement_type IN ('entree', 'sortie')),
+            quantity INTEGER NOT NULL CHECK(quantity > 0),
+            operator_name TEXT,
+            lot_number TEXT,
+            expiry_date TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(product_id) REFERENCES products(id)
+        );
+        """)
 
 
-def current_stock(product_id, lot):
-    with db() as conn:
-        row = conn.execute(
-            "SELECT COALESCE(SUM(quantite),0) AS total FROM stocks WHERE produit_id=? AND COALESCE(lot_vpsp,'Aucun')=?",
-            (product_id, lot),
-        ).fetchone()
-    return int(row["total"] or 0)
+@app.context_processor
+def inject_now():
+    return {"now": datetime.now()}
 
 
 @app.route("/")
-def home():
-    product_id = request.args.get("produit", type=int)
-    if product_id:
-        return redirect(url_for("sortie", product_id=product_id))
-
-    with db() as conn:
+def index():
+    with get_db() as conn:
         products = conn.execute(
-            """
-            SELECT p.id, p.nom, p.lot, p.quantite_min,
-                   COALESCE(SUM(s.quantite),0) AS stock_total
-            FROM produits p
-            LEFT JOIN stocks s ON s.produit_id=p.id
-            WHERE COALESCE(p.actif,1)=1
-            GROUP BY p.id, p.nom, p.lot, p.quantite_min
-            ORDER BY p.nom COLLATE NOCASE
-            """
+            "SELECT * FROM products ORDER BY name COLLATE NOCASE"
         ).fetchall()
-    return render_template("home.html", products=products)
+    return render_template("index.html", products=products)
+
+
+@app.route("/produits/ajouter", methods=["GET", "POST"])
+def add_product():
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        reference = request.form.get("reference", "").strip()
+        initial_stock_raw = request.form.get("initial_stock", "0").strip()
+
+        if not name:
+            flash("Le nom du produit est obligatoire.", "error")
+            return render_template("add_product.html")
+
+        try:
+            initial_stock = int(initial_stock_raw)
+            if initial_stock < 0:
+                raise ValueError
+        except ValueError:
+            flash("Le stock initial doit être un nombre entier positif.", "error")
+            return render_template("add_product.html")
+
+        try:
+            with get_db() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO products (name, reference, stock, created_at)
+                    VALUES (?, ?, ?, ?)
+                    """,
+                    (name, reference, initial_stock, datetime.now().isoformat(timespec="seconds"))
+                )
+            flash("Produit ajouté.", "success")
+            return redirect(url_for("index"))
+        except sqlite3.IntegrityError:
+            flash("Un produit avec ce nom existe déjà.", "error")
+
+    return render_template("add_product.html")
 
 
 @app.route("/entree")
-def entree_query():
-    product_id = request.args.get("produit", type=int)
-    if not product_id:
-        flash("Le QR code ne contient pas l'identifiant du produit.", "error")
-        return redirect(url_for("home"))
-    return redirect(url_for("entree", product_id=product_id))
+def entree_without_product():
+    return render_template(
+        "movement.html",
+        action="entree",
+        title="Entrée de stock",
+        product=None
+    )
 
 
 @app.route("/sortie")
-def sortie_query():
-    product_id = request.args.get("produit", type=int)
-    if not product_id:
-        flash("Le QR code ne contient pas l'identifiant du produit.", "error")
-        return redirect(url_for("home"))
-    return redirect(url_for("sortie", product_id=product_id))
+def sortie_without_product():
+    return render_template(
+        "movement.html",
+        action="sortie",
+        title="Sortie de stock",
+        product=None
+    )
 
 
 @app.route("/entree/<int:product_id>", methods=["GET", "POST"])
 def entree(product_id):
-    return movement(product_id, "ENTREE")
+    return handle_movement(product_id, "entree")
 
 
 @app.route("/sortie/<int:product_id>", methods=["GET", "POST"])
 def sortie(product_id):
-    return movement(product_id, "SORTIE")
+    return handle_movement(product_id, "sortie")
 
 
-def movement(product_id, movement_type):
-    product = get_product(product_id)
+def handle_movement(product_id, action):
+    with get_db() as conn:
+        product = conn.execute(
+            "SELECT * FROM products WHERE id = ?", (product_id,)
+        ).fetchone()
+
     if not product:
         abort(404)
 
-    selected_lot = request.form.get("lot_vpsp") or product["lot"] or "Armoire"
-    stock = current_stock(product_id, selected_lot)
-
     if request.method == "POST":
-        try:
-            quantity = int(request.form.get("quantite", "0"))
-        except ValueError:
-            quantity = 0
-        secouriste = request.form.get("secouriste", "").strip()
-        expiry = request.form.get("date_peremption", "").strip() or None
+        quantity_raw = request.form.get("quantity", "").strip()
+        operator_name = request.form.get("operator_name", "").strip()
+        lot_number = request.form.get("lot_number", "").strip()
+        expiry_date = request.form.get("expiry_date", "").strip()
 
-        if quantity <= 0:
-            flash("La quantité doit être supérieure à zéro.", "error")
-        elif not secouriste:
-            flash("Le nom du secouriste est obligatoire.", "error")
-        elif movement_type == "SORTIE" and quantity > stock:
-            flash(f"Stock insuffisant dans {selected_lot} : {stock} disponible(s).", "error")
-        else:
-            signed_quantity = quantity if movement_type == "ENTREE" else -quantity
-            comment = f"Saisie mobile QR — {secouriste}"
-            with db() as conn:
-                conn.execute(
-                    "INSERT INTO stocks(produit_id, lot_vpsp, quantite, date_peremption) VALUES(?,?,?,?)",
-                    (product_id, selected_lot, signed_quantity, expiry if movement_type == "ENTREE" else None),
+        try:
+            quantity = int(quantity_raw)
+            if quantity <= 0:
+                raise ValueError
+        except ValueError:
+            flash("La quantité doit être un nombre entier supérieur à zéro.", "error")
+            return render_template(
+                "movement.html",
+                action=action,
+                title="Entrée de stock" if action == "entree" else "Sortie de stock",
+                product=product
+            )
+
+        with get_db() as conn:
+            current = conn.execute(
+                "SELECT stock FROM products WHERE id = ?", (product_id,)
+            ).fetchone()
+
+            if action == "sortie" and quantity > current["stock"]:
+                flash(
+                    f"Stock insuffisant : seulement {current['stock']} unité(s) disponible(s).",
+                    "error"
                 )
-                conn.execute(
-                    """
-                    INSERT INTO mouvements(produit_id, lot_vpsp, type, quantite, commentaire, secouriste, date_peremption)
-                    VALUES(?,?,?,?,?,?,?)
-                    """,
-                    (product_id, selected_lot, movement_type, quantity, comment, secouriste, expiry),
+                return render_template(
+                    "movement.html",
+                    action=action,
+                    title="Sortie de stock",
+                    product=product
                 )
-                conn.commit()
-            new_stock = stock + signed_quantity
-            action = "Entrée" if movement_type == "ENTREE" else "Sortie"
-            flash(f"{action} validée. Nouveau stock dans {selected_lot} : {new_stock}.", "success")
-            return redirect(url_for("success", product_id=product_id, movement_type=movement_type.lower(), lot=selected_lot))
+
+            new_stock = current["stock"] + quantity if action == "entree" else current["stock"] - quantity
+
+            conn.execute(
+                "UPDATE products SET stock = ? WHERE id = ?",
+                (new_stock, product_id)
+            )
+            conn.execute(
+                """
+                INSERT INTO movements
+                (product_id, movement_type, quantity, operator_name, lot_number, expiry_date, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    product_id,
+                    action,
+                    quantity,
+                    operator_name,
+                    lot_number,
+                    expiry_date,
+                    datetime.now().isoformat(timespec="seconds")
+                )
+            )
+
+        label = "Entrée" if action == "entree" else "Sortie"
+        flash(f"{label} enregistrée. Nouveau stock : {new_stock}.", "success")
+        return redirect(url_for("index"))
 
     return render_template(
         "movement.html",
-        product=product,
-        movement_type=movement_type,
-        lots=LOTS,
-        selected_lot=selected_lot,
-        stock=stock,
-    )
-
-
-@app.route("/succes")
-def success():
-    product = get_product(request.args.get("product_id", type=int))
-    return render_template(
-        "success.html",
-        product=product,
-        movement_type=request.args.get("movement_type", ""),
-        lot=request.args.get("lot", ""),
+        action=action,
+        title="Entrée de stock" if action == "entree" else "Sortie de stock",
+        product=product
     )
 
 
 @app.route("/historique")
 def history():
-    with db() as conn:
-        rows = conn.execute(
-            """
-            SELECT m.date_mouvement, m.type, m.quantite, m.lot_vpsp,
-                   COALESCE(m.secouriste,'') AS secouriste,
-                   COALESCE(m.date_peremption,'') AS date_peremption,
-                   p.nom AS produit
-            FROM mouvements m
-            LEFT JOIN produits p ON p.id=m.produit_id
-            ORDER BY m.id DESC LIMIT 300
-            """
-        ).fetchall()
-    return render_template("history.html", rows=rows)
+    with get_db() as conn:
+        movements = conn.execute("""
+            SELECT m.*, p.name AS product_name, p.reference AS product_reference
+            FROM movements m
+            JOIN products p ON p.id = m.product_id
+            ORDER BY m.created_at DESC, m.id DESC
+            LIMIT 500
+        """).fetchall()
+    return render_template("history.html", movements=movements)
 
 
 @app.route("/qr/<action>/<int:product_id>.png")
-def qr_png(action, product_id):
-    if action not in {"entree", "sortie"} or not get_product(product_id):
+def qr_code(action, product_id):
+    if action not in {"entree", "sortie"}:
         abort(404)
-    target = url_for(action, product_id=product_id, _external=True)
-    image = qrcode.make(target)
-    data = io.BytesIO()
-    image.save(data, "PNG")
-    data.seek(0)
-    return send_file(data, mimetype="image/png", download_name=f"{action}_{product_id}.png")
 
+    with get_db() as conn:
+        product = conn.execute(
+            "SELECT id FROM products WHERE id = ?", (product_id,)
+        ).fetchone()
 
-@app.route("/qrcodes/<int:product_id>")
-def qrcodes(product_id):
-    product = get_product(product_id)
     if not product:
         abort(404)
+
+    target_url = url_for(action, product_id=product_id, _external=True)
+    image = qrcode.make(target_url)
+    output = io.BytesIO()
+    image.save(output, format="PNG")
+    output.seek(0)
+
+    return send_file(
+        output,
+        mimetype="image/png",
+        download_name=f"qr_{action}_{product_id}.png"
+    )
+
+
+@app.route("/produit/<int:product_id>/qrcodes")
+def product_qrcodes(product_id):
+    with get_db() as conn:
+        product = conn.execute(
+            "SELECT * FROM products WHERE id = ?", (product_id,)
+        ).fetchone()
+
+    if not product:
+        abort(404)
+
     return render_template("qrcodes.html", product=product)
 
 
-@app.route("/qrcodes.pdf")
-def qrcodes_pdf():
-    with db() as conn:
-        products = conn.execute(
-            "SELECT id, nom FROM produits WHERE COALESCE(actif,1)=1 ORDER BY nom COLLATE NOCASE"
-        ).fetchall()
-
-    output = io.BytesIO()
-    pdf = canvas.Canvas(output, pagesize=A4)
-    width, height = A4
-    margin = 12 * mm
-    col_width = (width - 2 * margin) / 2
-    block_height = 63 * mm
-    qr_size = 34 * mm
-    x_positions = [margin, margin + col_width]
-    y = height - margin - block_height
-    col = 0
-
-    for product in products:
-        if y < margin:
-            pdf.showPage()
-            y = height - margin - block_height
-            col = 0
-        x = x_positions[col]
-        pdf.setFont("Helvetica-Bold", 9)
-        pdf.drawCentredString(x + col_width / 2, y + 57 * mm, product["nom"][:46])
-
-        for idx, action in enumerate(("entree", "sortie")):
-            target = url_for(action, product_id=product["id"], _external=True)
-            img = qrcode.make(target)
-            img_io = io.BytesIO()
-            img.save(img_io, "PNG")
-            img_io.seek(0)
-            from reportlab.lib.utils import ImageReader
-            qr_x = x + (8 if idx == 0 else 49) * mm
-            pdf.drawImage(ImageReader(img_io), qr_x, y + 16 * mm, qr_size, qr_size)
-            pdf.setFont("Helvetica-Bold", 8)
-            pdf.drawCentredString(qr_x + qr_size / 2, y + 11 * mm, "ENTRÉE" if action == "entree" else "SORTIE")
-        pdf.setFont("Helvetica", 7)
-        pdf.drawCentredString(x + col_width / 2, y + 5 * mm, f"Produit ID {product['id']}")
-
-        col += 1
-        if col == 2:
-            col = 0
-            y -= block_height
-
-    pdf.save()
-    output.seek(0)
-    return send_file(output, mimetype="application/pdf", download_name="QR_Entrees_Sorties_VPSP.pdf")
+@app.errorhandler(404)
+def not_found(_error):
+    return render_template("404.html"), 404
 
 
-@app.route("/health")
-def health():
-    return {"status": "ok", "database": str(DB_PATH)}
-
-
-ensure_database()
+if __name__ == "__main__":
+    init_db()
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=True)

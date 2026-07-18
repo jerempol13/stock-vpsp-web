@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="panel">
+    <h1>{{ title }}</h1>
+
+    {% if product %}
+        <form method="post">
+            <label>Produit</label>
+            <input value="{{ product.name }}" readonly>
+
+            <p class="muted">Stock actuel : <strong>{{ product.stock }}</strong></p>
+
+            <label for="quantity">Quantité</label>
+            <input id="quantity" name="quantity" type="number" min="1" inputmode="numeric" required autofocus>
+
+            <label for="operator_name">Nom du secouriste</label>
+            <input id="operator_name" name="operator_name">
+
+            {% if action == "entree" %}
+                <label for="lot_number">Numéro de lot</label>
+                <input id="lot_number" name="lot_number">
+
+                <label for="expiry_date">Date de péremption</label>
+                <input id="expiry_date" name="expiry_date" type="date">
+            {% endif %}
+
+            <div class="actions">
+                <button type="submit">
+                    Valider {{ "l'entrée" if action == "entree" else "la sortie" }}
+                </button>
+                <a class="button secondary" href="{{ url_for('index') }}">Annuler</a>
+            </div>
+        </form>
+    {% else %}
+        <p>Produit non indiqué. Utilisez le QR code du produit ou choisissez-le depuis la page Stock.</p>
+        <a class="button" href="{{ url_for('index') }}">Voir les produits</a>
+    {% endif %}
+</div>
+{% endblock %}
